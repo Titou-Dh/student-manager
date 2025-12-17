@@ -45,7 +45,17 @@ const StudentForm = ({ student, onSubmit, onCancel }) => {
 
   return (
     <form onSubmit={handleSubmit} style={styles.form}>
-      <h2 style={styles.title}>{student ? 'Edit Student' : 'Add New Student'}</h2>
+      <h2 style={styles.title}>
+        {student ? (
+          <>
+            <span style={styles.icon}>✏️</span> Edit Student
+          </>
+        ) : (
+          <>
+            <span style={styles.icon}>➕</span> Add New Student
+          </>
+        )}
+      </h2>
       
       <div style={styles.formGroup}>
         <label style={styles.label}>
@@ -58,6 +68,7 @@ const StudentForm = ({ student, onSubmit, onCancel }) => {
           onChange={handleChange}
           required
           style={styles.input}
+          placeholder="Enter student name"
         />
       </div>
 
@@ -72,6 +83,7 @@ const StudentForm = ({ student, onSubmit, onCancel }) => {
           onChange={handleChange}
           required
           style={styles.input}
+          placeholder="student@example.com"
         />
       </div>
 
@@ -83,6 +95,7 @@ const StudentForm = ({ student, onSubmit, onCancel }) => {
           value={formData.class}
           onChange={handleChange}
           style={styles.input}
+          placeholder="Enter class name"
         />
       </div>
 
@@ -96,6 +109,7 @@ const StudentForm = ({ student, onSubmit, onCancel }) => {
           min="0"
           max="100"
           style={styles.input}
+          placeholder="0-100"
         />
       </div>
 
@@ -115,66 +129,116 @@ const StudentForm = ({ student, onSubmit, onCancel }) => {
 
 const styles = {
   form: {
-    maxWidth: '500px',
-    margin: '0 auto 2rem',
-    padding: '1.5rem',
-    backgroundColor: '#f9f9f9',
-    borderRadius: '8px',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-  },
-  title: {
-    marginTop: 0,
-    marginBottom: '1.5rem',
-    color: '#333',
+    maxWidth: '600px',
+    margin: '0 auto 3rem',
+    padding: '2.5rem',
+    background: 'linear-gradient(135deg, rgba(30, 30, 50, 0.8) 0%, rgba(20, 20, 40, 0.8) 100%)',
+    backdropFilter: 'blur(20px)',
+    borderRadius: '20px',
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    animation: 'fadeIn 0.6s ease-out',
+    position: 'relative',
+    overflow: 'hidden',
   },
   formGroup: {
-    marginBottom: '1rem',
+    marginBottom: '1.5rem',
   },
   label: {
     display: 'block',
-    marginBottom: '0.5rem',
+    marginBottom: '0.75rem',
     fontWeight: '500',
-    color: '#555',
+    color: '#e0e0e0',
+    fontSize: '0.95rem',
+    letterSpacing: '0.3px',
   },
   required: {
-    color: '#e74c3c',
+    color: '#ff6b6b',
+    fontWeight: '600',
   },
   input: {
     width: '100%',
-    padding: '0.75rem',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
+    padding: '1rem',
+    background: 'rgba(15, 20, 35, 0.6)',
+    border: '1px solid rgba(102, 126, 234, 0.3)',
+    borderRadius: '12px',
     fontSize: '1rem',
+    color: '#e0e0e0',
     boxSizing: 'border-box',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  },
+  title: {
+    marginTop: 0,
+    marginBottom: '2rem',
+    color: '#e0e0e0',
+    fontSize: '1.8rem',
+    fontWeight: '600',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.75rem',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+  },
+  icon: {
+    fontSize: '1.5rem',
+    WebkitTextFillColor: '#667eea',
+    filter: 'drop-shadow(0 0 8px rgba(102, 126, 234, 0.5))',
   },
   buttonGroup: {
     display: 'flex',
-    gap: '0.5rem',
-    marginTop: '1.5rem',
+    gap: '1rem',
+    marginTop: '2rem',
   },
   submitButton: {
     flex: 1,
-    padding: '0.75rem',
-    backgroundColor: '#3498db',
+    padding: '1rem 2rem',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
     color: 'white',
     border: 'none',
-    borderRadius: '4px',
+    borderRadius: '12px',
     fontSize: '1rem',
+    fontWeight: '600',
     cursor: 'pointer',
-    fontWeight: '500',
+    boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
+    position: 'relative',
+    overflow: 'hidden',
   },
   cancelButton: {
     flex: 1,
-    padding: '0.75rem',
-    backgroundColor: '#95a5a6',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
+    padding: '1rem 2rem',
+    background: 'rgba(148, 163, 184, 0.2)',
+    color: '#cbd5e1',
+    border: '1px solid rgba(148, 163, 184, 0.3)',
+    borderRadius: '12px',
     fontSize: '1rem',
+    fontWeight: '600',
     cursor: 'pointer',
-    fontWeight: '500',
+    backdropFilter: 'blur(10px)',
   },
 };
 
-export default StudentForm;
+// Add input focus styles dynamically
+if (typeof document !== 'undefined') {
+  const styleSheet = document.createElement('style');
+  styleSheet.textContent = `
+    input:focus {
+      border-color: #667eea !important;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2), 0 0 20px rgba(102, 126, 234, 0.3) !important;
+      background: rgba(15, 20, 35, 0.8) !important;
+    }
+    input::placeholder {
+      color: rgba(224, 224, 224, 0.4);
+    }
+    button:hover {
+      transform: translateY(-2px) !important;
+    }
+    button:active {
+      transform: translateY(0) !important;
+    }
+  `;
+  document.head.appendChild(styleSheet);
+}
 
+export default StudentForm;

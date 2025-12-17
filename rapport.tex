@@ -1,0 +1,387 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\thepage}
+\fancyfoot[C]{Student Manager - Documentation Technique}
+
+% Configuration pour le code
+\lstset{
+    language=JavaScript,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=2
+}
+
+\title{\textbf{Student Manager}\\
+\large Application Web MERN - Documentation Technique Complète}
+\author{Abderrahim Dhehibi \and Rayen Mlayeh}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+\subsection{Présentation du Projet}
+
+Student Manager est une application web moderne développée selon l'architecture MERN (MongoDB, Express, React, Node.js). Cette application permet la gestion complète des étudiants via une interface utilisateur intuitive et une API RESTful robuste. Le projet a été conçu comme une application monorepo utilisant npm workspaces, facilitant ainsi la gestion et le déploiement de l'ensemble du système.
+
+L'objectif principal de cette application est de fournir une solution simple et efficace pour effectuer des opérations CRUD (Create, Read, Update, Delete) sur une collection d'étudiants. L'application se distingue par sa simplicité, sa performance et sa maintenabilité, sans complexité inutile comme l'authentification ou les rôles utilisateurs, conformément aux spécifications du projet.
+
+\subsection{Objectifs et Fonctionnalités}
+
+L'application Student Manager offre les fonctionnalités suivantes :
+
+\begin{itemize}
+    \item \textbf{Ajout d'un étudiant} : Création d'un nouvel étudiant avec validation des données
+    \item \textbf{Visualisation des étudiants} : Affichage de tous les étudiants dans un tableau structuré
+    \item \textbf{Modification d'un étudiant} : Mise à jour des informations d'un étudiant existant
+    \item \textbf{Suppression d'un étudiant} : Suppression d'un étudiant avec confirmation
+\end{itemize}
+
+Ces fonctionnalités sont accessibles via une interface utilisateur réactive et une API REST complète, garantissant une expérience utilisateur fluide et des performances optimales.
+
+\subsection{Modèle de Données}
+
+Le modèle de données est centré autour d'une unique collection \texttt{Student} avec les champs suivants :
+
+\begin{itemize}
+    \item \texttt{name} : String (requis) - Nom de l'étudiant
+    \item \texttt{email} : String (requis, unique) - Adresse email unique
+    \item \texttt{class} : String (optionnel) - Classe de l'étudiant
+    \item \texttt{grade} : Number (optionnel) - Note de l'étudiant (0-100)
+    \item \texttt{createdAt} : Date (auto-généré) - Date de création
+    \item \texttt{updatedAt} : Date (auto-généré) - Date de mise à jour
+\end{itemize}
+
+\section{Architecture et Technologies}
+
+\subsection{Stack Technologique}
+
+\subsubsection{Backend}
+
+Le backend est construit avec Node.js et Express.js, offrant une architecture RESTful modulaire :
+
+\begin{itemize}
+    \item \textbf{Node.js} : Environnement d'exécution JavaScript côté serveur
+    \item \textbf{Express.js} : Framework web minimaliste et flexible
+    \item \textbf{MongoDB} : Base de données NoSQL orientée documents
+    \item \textbf{Mongoose} : ODM (Object Document Mapper) pour MongoDB
+    \item \textbf{CORS} : Gestion des requêtes cross-origin
+    \item \textbf{dotenv} : Gestion des variables d'environnement
+    \item \textbf{Nodemon} : Outil de développement pour rechargement automatique
+\end{itemize}
+
+\subsubsection{Frontend}
+
+Le frontend utilise React avec Vite pour des performances optimales :
+
+\begin{itemize}
+    \item \textbf{React 18} : Bibliothèque JavaScript pour interfaces utilisateur
+    \item \textbf{Vite} : Build tool moderne et rapide avec HMR (Hot Module Replacement)
+    \item \textbf{Axios} : Client HTTP pour les requêtes API
+    \item \textbf{JavaScript ES6+} : Syntaxe moderne avec hooks React
+\end{itemize}
+
+\subsubsection{Architecture Monorepo}
+
+Le projet utilise npm workspaces pour gérer un monorepo :
+
+\begin{itemize}
+    \item Structure modulaire avec workspaces séparés
+    \item Gestion centralisée des dépendances
+    \item Scripts unifiés pour le développement
+    \item Utilisation de \texttt{concurrently} pour exécuter plusieurs processus
+\end{itemize}
+
+\subsection{Structure du Projet}
+
+La structure du projet suit les meilleures pratiques de développement :
+
+\begin{verbatim}
+student-manager/
+├── client/              # Application React (Vite)
+│   ├── src/
+│   │   ├── components/  # Composants React
+│   │   ├── services/    # Services API
+│   │   └── App.jsx      # Composant principal
+│   ├── index.html       # Point d'entrée HTML
+│   └── vite.config.js   # Configuration Vite
+├── server/              # API Express
+│   ├── config/          # Configuration (DB)
+│   ├── controllers/     # Logique métier
+│   ├── models/          # Modèles Mongoose
+│   ├── routes/          # Routes API
+│   └── server.js        # Point d'entrée serveur
+└── package.json         # Configuration monorepo
+\end{verbatim}
+
+\section{Implémentation Détaillée}
+
+\subsection{Backend - API REST}
+
+\subsubsection{Configuration de la Base de Données}
+
+La connexion à MongoDB est gérée dans \texttt{config/db.js} :
+
+\begin{lstlisting}
+const mongoose = require('mongoose');
+
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(
+      process.env.MONGODB_URI || 
+      'mongodb://localhost:27017/student-manager',
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      }
+    );
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.error('Error connecting to MongoDB:', error.message);
+    process.exit(1);
+  }
+};
+
+module.exports = connectDB;
+\end{lstlisting}
+
+\subsubsection{Modèle Student}
+
+Le modèle Mongoose définit le schéma avec validation :
+
+\begin{lstlisting}
+const studentSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, 'Name is required'],
+    trim: true,
+  },
+  email: {
+    type: String,
+    required: [true, 'Email is required'],
+    unique: true,
+    trim: true,
+    lowercase: true,
+  },
+  class: {
+    type: String,
+    trim: true,
+  },
+  grade: {
+    type: Number,
+    min: 0,
+    max: 100,
+  },
+}, {
+  timestamps: true,
+});
+\end{lstlisting}
+
+\subsubsection{Contrôleurs et Routes}
+
+Les contrôleurs implémentent la logique CRUD avec gestion d'erreurs appropriée :
+
+\begin{itemize}
+    \item \texttt{getStudents} : Récupère tous les étudiants (GET /api/students)
+    \item \texttt{createStudent} : Crée un nouvel étudiant (POST /api/students)
+    \item \texttt{updateStudent} : Met à jour un étudiant (PUT /api/students/:id)
+    \item \texttt{deleteStudent} : Supprime un étudiant (DELETE /api/students/:id)
+\end{itemize}
+
+Chaque contrôleur utilise des blocs try/catch et retourne des codes de statut HTTP appropriés (200, 201, 404, 500).
+
+\subsection{Frontend - Interface Utilisateur}
+
+\subsubsection{Architecture des Composants}
+
+L'application React est structurée en composants modulaires :
+
+\begin{itemize}
+    \item \texttt{App.jsx} : Composant principal gérant l'état global
+    \item \texttt{StudentForm} : Formulaire pour créer/modifier un étudiant
+    \item \texttt{StudentList} : Liste/tableau des étudiants
+    \item \texttt{StudentItem} : Élément individuel dans la liste
+\end{itemize}
+
+\subsubsection{Gestion d'État}
+
+L'état de l'application est géré avec les hooks React :
+
+\begin{lstlisting}
+const [students, setStudents] = useState([]);
+const [editingStudent, setEditingStudent] = useState(null);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState(null);
+\end{lstlisting}
+
+\subsubsection{Service API}
+
+Le service API centralise toutes les requêtes HTTP :
+
+\begin{lstlisting}
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: '/api/students',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+export const getStudents = () => api.get('/');
+export const createStudent = (student) => api.post('/', student);
+export const updateStudent = (id, student) => 
+  api.put(`/${id}`, student);
+export const deleteStudent = (id) => api.delete(`/${id}`);
+\end{lstlisting}
+
+\subsubsection{Flux Utilisateur}
+
+Le flux de l'application suit cette séquence :
+
+\begin{enumerate}
+    \item Chargement initial : Récupération des étudiants via \texttt{useEffect}
+    \item Affichage : Liste des étudiants dans un tableau
+    \item Création : Formulaire vide en haut de page
+    \item Édition : Clic sur "Edit" remplit le formulaire
+    \item Soumission : Détection automatique création vs modification
+    \item Suppression : Confirmation avant suppression
+\end{enumerate}
+
+\section{Configuration et Déploiement}
+
+\subsection{Installation}
+
+\subsubsection{Prérequis}
+
+\begin{itemize}
+    \item Node.js version 16 ou supérieure
+    \item MongoDB (local ou instance distante)
+    \item npm version 7+ (support des workspaces)
+\end{itemize}
+
+\subsubsection{Configuration}
+
+1. Installation des dépendances :
+\begin{verbatim}
+npm install
+\end{verbatim}
+
+2. Configuration de l'environnement (\texttt{server/.env}) :
+\begin{verbatim}
+MONGODB_URI=mongodb://localhost:27017/student-manager
+PORT=5000
+\end{verbatim}
+
+3. Lancement de l'application :
+\begin{verbatim}
+npm run dev
+\end{verbatim}
+
+\subsection{Scripts Disponibles}
+
+\begin{itemize}
+    \item \texttt{npm run dev} : Démarre le serveur et le client en mode développement
+    \item \texttt{npm start} : Démarre en mode production
+    \item \texttt{npm run dev --workspace=server} : Démarre uniquement le backend
+    \item \texttt{npm run dev --workspace=client} : Démarre uniquement le frontend
+    \item \texttt{npm run build --workspace=client} : Build de production du frontend
+\end{itemize}
+
+\subsection{Configuration Vite}
+
+Vite est configuré avec un proxy pour le développement :
+
+\begin{lstlisting}
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 3000,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
+    },
+  },
+});
+\end{lstlisting}
+
+\section{Conclusion et Perspectives}
+
+\subsection{Bilan du Projet}
+
+Student Manager est une application web complète et fonctionnelle qui démontre la maîtrise de la stack MERN. L'architecture monorepo facilite la maintenance et le développement, tandis que l'utilisation de Vite garantit des performances optimales en développement comme en production.
+
+Les points forts de l'application incluent :
+
+\begin{itemize}
+    \item Architecture modulaire et maintenable
+    \item Code propre avec séparation des responsabilités
+    \item Gestion d'erreurs robuste
+    \item Interface utilisateur intuitive et réactive
+    \item Performance optimale grâce à Vite et React
+    \item Structure monorepo facilitant la collaboration
+\end{itemize}
+
+\subsection{Améliorations Possibles}
+
+Bien que l'application réponde parfaitement aux spécifications, quelques améliorations pourraient être envisagées pour un usage en production :
+
+\begin{itemize}
+    \item Authentification et autorisation (JWT, OAuth)
+    \item Validation côté client plus poussée
+    \item Tests unitaires et d'intégration
+    \item Pagination pour de grandes listes d'étudiants
+    \item Recherche et filtrage des étudiants
+    \item Export des données (CSV, PDF)
+    \item Mode sombre (dark mode)
+    \item Responsive design amélioré pour mobile
+\end{itemize}
+
+\subsection{Conclusion}
+
+Cette application démontre une compréhension solide des technologies web modernes et des meilleures pratiques de développement. La structure monorepo, l'utilisation de Vite, et l'architecture RESTful créent une base solide pour une application scalable et maintenable.
+
+Le code est propre, bien organisé, et suit les conventions modernes de développement JavaScript/React. L'application est prête pour un déploiement en production avec des configurations appropriées.
+
+\vspace{1cm}
+
+\textbf{Auteurs :} Abderrahim Dhehibi, Rayen Mlayeh
+
+\textbf{Date :} \today
+
+\end{document}
+
